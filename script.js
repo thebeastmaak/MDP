@@ -11,27 +11,30 @@ async function fetchProduct() {
   }
 
   try {
-  const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
-  const data = await res.json();
-  console.log("Fetch response status:", res.status);
-  console.log("Fetch response data:", data);
+    const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
 
-  if (res.status !== 200) {
-    container.innerHTML = `<p>❌ ${data.error || 'Failed to load medical product.'}</p>`;
-    return;
-  }
-  // ... render data as before
-} catch (err) {
-  console.error("Fetch error:", err);
-  container.innerHTML = `<p>❌ Failed to load medical product. Try again later.</p>`;
-}
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      container.innerHTML = `<p>❌ Invalid response from server.</p>`;
+      return;
+    }
+
+    console.log("Fetch response status:", res.status);
+    console.log("Fetch response data:", data);
+
+    if (res.status !== 200) {
+      container.innerHTML = `<p>❌ ${data.error || "Failed to load medical product."}</p>`;
+      return;
+    }
 
     container.innerHTML = `
       <div class="medical-passport">
         <div class="header">DIGITAL MEDICAL PRODUCT PASSPORT</div>
         <div class="passport-body">
           <div class="product-photo">
-            <img src="${data.image || 'https://via.placeholder.com/300x400?text=Medical+Product'}" alt="${data.name || 'Medical Product'}" />
+            <img src="${data.image || "https://via.placeholder.com/300x400?text=Medical+Product"}" alt="${data.name || "Medical Product"}" />
           </div>
           <div class="product-info">
             <h2>${data.name || "Unnamed Medical Product"}</h2>
@@ -51,8 +54,10 @@ async function fetchProduct() {
           <button class="chat-button" onclick="toggleChat()">Ask AI</button>
         </div>
 
-        <div id="chatbot-popup">
-          <div class="chat-header">Ask AI <span onclick="toggleChat()" style="cursor:pointer;float:right;">❌</span></div>
+        <div id="chatbot-popup" class="chat-popup">
+          <div class="chat-header">
+            Ask AI <span onclick="toggleChat()" style="cursor:pointer;float:right;">❌</span>
+          </div>
           <div id="chat-messages" class="chat-messages"></div>
           <div class="chat-input">
             <input type="text" id="chat-input" placeholder="Ask something about this medical product..." autocomplete="off" />
@@ -65,7 +70,7 @@ async function fetchProduct() {
 
     attachChatEvents();
   } catch (err) {
-    console.error(err);
+    console.error("Fetch error:", err);
     container.innerHTML = `<p>❌ Failed to load medical product. Try again later.</p>`;
   }
 }
@@ -140,13 +145,14 @@ function attachChatEvents() {
   }
 }
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/firebase-messaging-sw.js')
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/firebase-messaging-sw.js")
     .then((registration) => {
-      console.log('✅ Service Worker registered with scope:', registration.scope);
+      console.log("✅ Service Worker registered with scope:", registration.scope);
     })
     .catch((error) => {
-      console.error('❌ Service Worker registration failed:', error);
+      console.error("❌ Service Worker registration failed:", error);
     });
 }
 
