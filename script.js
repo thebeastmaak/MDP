@@ -11,13 +11,20 @@ async function fetchProduct() {
   }
 
   try {
-    const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
-    const data = await res.json();
+  const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
+  const data = await res.json();
+  console.log("Fetch response status:", res.status);
+  console.log("Fetch response data:", data);
 
-    if (res.status !== 200) {
-      container.innerHTML = `<p>❌ ${data.error || 'Failed to load medical product.'}</p>`;
-      return;
-    }
+  if (res.status !== 200) {
+    container.innerHTML = `<p>❌ ${data.error || 'Failed to load medical product.'}</p>`;
+    return;
+  }
+  // ... render data as before
+} catch (err) {
+  console.error("Fetch error:", err);
+  container.innerHTML = `<p>❌ Failed to load medical product. Try again later.</p>`;
+}
 
     container.innerHTML = `
       <div class="medical-passport">
