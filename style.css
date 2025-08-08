@@ -4,7 +4,8 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.athlete-passport {
+/* Main container renamed to patient */
+.patient-passport {
   max-width: 400px;
   margin: 2rem auto;
   border: 2px solid #1c3b70;
@@ -18,7 +19,7 @@ body {
   flex-direction: column;
 }
 
-.athlete-passport .header {
+.patient-passport .header {
   text-align: center;
   background-color: #1c3b70;
   color: #ffffff;
@@ -34,35 +35,37 @@ body {
   flex-grow: 1;
 }
 
-.athlete-photo img {
-  width: 100%;
-  height: auto;
+/* Patient photo with CSS variables for easy resizing */
+.patient-photo img {
+  width: var(--patient-photo-width, 300px);
+  height: var(--patient-photo-height, 400px);
+  object-fit: cover; /* maintain aspect ratio, crop if needed */
   border-radius: 8px;
   display: block;
   margin-bottom: 1rem;
   box-shadow: 0 4px 8px rgba(0,0,0,0.4);
 }
 
-.athlete-info {
+.patient-info {
   background-color: rgba(255,255,255,0.07);
   padding: 1rem;
   border-radius: 8px;
 }
 
-.athlete-info h2 {
+.patient-info h2 {
   margin-top: 0;
   color: #ffffff;
   font-weight: 700;
 }
 
-.athlete-info ul {
+.patient-info ul {
   list-style: none;
   padding: 0;
   font-size: 0.9rem;
   line-height: 1.4;
 }
 
-.athlete-info li {
+.patient-info li {
   margin: 0.3rem 0;
 }
 
