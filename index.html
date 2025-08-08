@@ -170,7 +170,7 @@
     }
     try {
       // Update this URL to your backend's actual patient endpoint
-      const res = await fetch(`https://your-mdp-backend-url.com/patient/${id}`);
+      const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
       patientData = await res.json();
       if (res.status !== 200) {
         return container.innerHTML = `<p>❌ ${patientData.error || 'Patient not found.'}</p>`;
