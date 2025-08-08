@@ -174,7 +174,7 @@
       return;
     }
     try {
-      // Update this URL to your backend's actual patient endpoint
+      // Backend patient data endpoint
       const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
       patientData = await res.json();
       if (res.status !== 200) {
@@ -259,7 +259,6 @@
       messages.scrollTop = messages.scrollHeight;
       input.value = "";
 
-      // Call your AI backend here - example POST request:
       try {
         const response = await fetch("https://medical-dpp-backend.onrender.com/ask", {
           method: "POST",
@@ -286,17 +285,16 @@
       messages.scrollTop = messages.scrollHeight;
     };
 
-    // Optional: add Enter key to send message
     if (input) {
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") sendBtn.click();
       });
     }
 
-    // Placeholder mic button click event (you can implement voice recognition later)
-    if (micBtn) micBtn.onclick = () => {
-      alert("Voice input not implemented yet.");
-    };
+    if (micBtn) {
+      // Placeholder for future voice input feature
+      micBtn.onclick = () => alert("Voice input feature not implemented yet.");
+    }
   }
 
   fetchPatient();
