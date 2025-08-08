@@ -37,8 +37,8 @@ body {
 
 /* Patient photo with CSS variables for easy resizing */
 .patient-photo img {
-  width: var(--patient-photo-width, 100px);
-  height: var(--patient-photo-height, 100px);
+  width: var(--patient-photo-width, 300px);
+  height: var(--patient-photo-height, 400px);
   object-fit: cover; /* maintain aspect ratio, crop if needed */
   border-radius: 8px;
   display: block;
