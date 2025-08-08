@@ -11,7 +11,7 @@ async function fetchProduct() {
   }
 
   try {
-    const res = await fetch(`https://backend-dpp.onrender.com/medical-product/${id}`);
+    const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
     const data = await res.json();
 
     if (res.status !== 200) {
