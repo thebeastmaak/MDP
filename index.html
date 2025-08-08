@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Digital Patient Passport</title>
+<style>
+  body { background-color: #eaeaea; margin: 0; padding: 2rem; font-family: Arial, sans-serif; }
+  #patient-container { max-width: 400px; margin: 0 auto; position: relative; }
+  .patient-passport {
+    border: 2px solid #1c3b70;
+    background-color: #1c3b70;
+    color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    position: relative;
+  }
+  .header {
+    text-align: center;
+    background: #1c3b70;
+    color: #fff;
+    padding: 1rem;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  .passport-body {
+    background: linear-gradient(to bottom right, #15315b, #502c83);
+    padding: 1rem;
+  }
+  .patient-photo img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    object-fit: cover;
+  }
+  .patient-info {
+    background-color: rgba(255,255,255,0.05);
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  .patient-info h2 {
+    margin-top: 0;
+    color: #fff;
+  }
+  .patient-info ul {
+    list-style: none;
+    padding: 0;
+    font-size: 0.9rem;
+  }
+  .patient-info li {
+    margin: 0.3rem 0;
+  }
+  .footer {
+    background: #0e2044;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+  }
+  .footer-name {
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 0.2rem;
+  }
+  .footer-details {
+    font-size: 0.8rem;
+    color: #a9c8f9;
+    margin-bottom: 0.5rem;
+  }
+  .chat-button {
+    background: #fff;
+    color: #1c3b70;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .chat-button:hover {
+    background: #dce6ff;
+  }
+  #chatbot-popup {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 100%);
+    width: 100%;
+    max-width: 400px;
+    background: #fff;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  #chatbot-popup.visible {
+    transform: translate(-50%, 0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .chat-header {
+    background: #1c3b70;
+    color: #fff;
+    text-align: center;
+    padding: 0.7rem;
+    font-weight: bold;
+    position: relative;
+  }
+  .chat-header span {
+    position: absolute;
+    right: 0.5rem;
+    cursor: pointer;
+  }
+  #chat-messages {
+    padding: 1rem;
+    height: 180px;
+    overflow-y: auto;
+    background: #f2f2f2;
+    color: #000;
+  }
+  #chat-input-area {
+    display: flex;
+    border-top: 1px solid #ccc;
+  }
+  #chat-input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    font-size: 0.9rem;
+  }
+  #mic-btn, #send-btn {
+    background: #1c3b70;
+    color: #fff;
+    border: none;
+    padding: 0 12px;
+    cursor: pointer;
+  }
+  #mic-btn:hover, #send-btn:hover {
+    background: #163057;
+  }
+  .message {
+    margin: 5px 0;
+  }
+  .user {
+    font-weight: bold;
+    color: #1c3b70;
+  }
+  .bot {
+    color: #444;
+  }
+</style>
+</head>
+<body>
+  <div id="patient-container">Loading...</div>
+
+  <script>
+  const container = document.getElementById("patient-container");
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  let patientData = null;
+
+  async function fetchPatient() {
+    container.innerHTML = "Loading...";
+    if (!id) {
+      container.innerHTML = "<p>❌ No Patient ID provided in URL.</p>";
+      return;
+    }
+    try {
+      // Update this URL to your backend's actual patient endpoint
+      const res = await fetch(`https://your-mdp-backend-url.com/patient/${id}`);
+      patientData = await res.json();
+      if (res.status !== 200) {
+        return container.innerHTML = `<p>❌ ${patientData.error || 'Patient not found.'}</p>`;
+      }
+
+      container.innerHTML = `
+        <div class="patient-passport">
+          <div class="header">DIGITAL PATIENT PASSPORT</div>
+          <div class="passport-body">
+            <div class="patient-photo">
+              <img src="${patientData.photo || 'https://via.placeholder.com/300x400?text=Patient+Photo'}" alt="${patientData.full_name || 'Patient Photo'}" />
+            </div>
+            <div class="patient-info">
+              <h2>${patientData.full_name || "Unnamed Patient"}</h2>
+              <ul>
+                <li><strong>Patient ID:</strong> ${patientData.patient_id || "N/A"}</li>
+                <li><strong>Date of Birth:</strong> ${patientData.dob || "N/A"}</li>
+                <li><strong>Gender:</strong> ${patientData.gender || "N/A"}</li>
+                <li><strong>National ID:</strong> ${patientData.id_number || "N/A"}</li>
+                <li><strong>Phone:</strong> ${patientData.phone || "N/A"}</li>
+                <li><strong>Email:</strong> ${patientData.email || "N/A"}</li>
+                <li><strong>Address:</strong> ${patientData.address || "N/A"}</li>
+                <li><strong>Emergency Contact Name:</strong> ${patientData.emergency_name || "N/A"}</li>
+                <li><strong>Emergency Relationship:</strong> ${patientData.emergency_relationship || "N/A"}</li>
+                <li><strong>Emergency Phone:</strong> ${patientData.emergency_phone || "N/A"}</li>
+                <li><strong>Insurance Provider:</strong> ${patientData.insurance_provider || "N/A"}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer">
+            <div class="footer-name">${patientData.full_name || "Unnamed Patient"}</div>
+            <div class="footer-details">
+              PATIENT ID: ${patientData.patient_id || "N/A"}<br/>
+              Contact: ${patientData.phone || "N/A"}
+            </div>
+            <button class="chat-button" onclick="toggleChat()">🤖 Ask AI</button>
+          </div>
+          <div id="chatbot-popup">
+            <div class="chat-header">Ask AI Assis
