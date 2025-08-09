@@ -120,7 +120,7 @@
         appendMessage("AI: ...thinking...", "bot");
 
         try {
-          const response = await fetch("https://medical-dpp-backend.onrender.com/ai-chat", {
+          const response = await fetch("https://dpp-chatbot-backend.onrender.com/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ patient_id: id, question }),
