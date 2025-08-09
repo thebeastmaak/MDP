@@ -185,49 +185,51 @@
       const photoSrc = patientData.photo_url || 'https://via.placeholder.com/300x400?text=Patient+Photo';
 
       container.innerHTML = `
-  <div class="medical-passport">
-    <div class="header">DIGITAL MEDICAL PRODUCT PASSPORT</div>
-    <div class="passport-body">
-      <div class="product-photo">
-        <img src="${data.image || "https://via.placeholder.com/300x400?text=Medical+Product"}" alt="${data.name || "Medical Product"}" />
-      </div>
-      <div class="product-info">
-        <h2>${data.name || "Unnamed Medical Product"}</h2>
-        <ul>
-          <li><strong>Product ID:</strong> ${data.product_id || "N/A"}</li>
-          <li><strong>Manufacturer:</strong> ${data.manufacturer || "N/A"}</li>
-          <li><strong>Batch Number:</strong> ${data.batch_number || "N/A"}</li>
-          <li><strong>Expiry Date:</strong> ${data.expiry_date || "N/A"}</li>
-          <li><strong>Certification:</strong> ${data.certification || "N/A"}</li>
-          <li><strong>Description:</strong> ${data.description || "N/A"}</li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer">
-      <div class="footer-name">${data.name || "Unnamed Medical Product"}</div>
-      <div class="footer-details">${data.manufacturer || "Manufacturer Not Provided"}</div>
-
-      <div class="button-container">
-        <button class="btn-top" onclick="alert('Button 1 clicked')">Button 1</button>
-        <button class="btn-top" onclick="alert('Button 2 clicked')">Button 2</button>
-        <button class="chat-button" onclick="toggleChat()">Ask AI</button>
-      </div>
-    </div>
-
-    <div id="chatbot-popup" class="chat-popup">
-      <div class="chat-header">
-        Ask AI <span onclick="toggleChat()" style="cursor:pointer;float:right;">❌</span>
-      </div>
-      <div id="chat-messages" class="chat-messages"></div>
-      <div class="chat-input">
-        <input type="text" id="chat-input" placeholder="Ask something about this medical product..." autocomplete="off" />
-        <button id="mic-btn" title="Voice input not implemented yet">🎤</button>
-        <button id="send-btn" title="Send message">➤</button>
-      </div>
-    </div>
-  </div>
-`;
-
+        <div class="patient-passport">
+          <div class="header">DIGITAL PATIENT PASSPORT</div>
+          <div class="passport-body">
+            <div class="patient-photo">
+              <img src="${photoSrc}" alt="${patientData.full_name || 'Patient Photo'}" />
+            </div>
+            <div class="patient-info">
+              <h2>${patientData.full_name || "Unnamed Patient"}</h2>
+              <ul>
+                <li><strong>Patient ID:</strong> ${patientData.patient_id || "N/A"}</li>
+                <li><strong>Date of Birth:</strong> ${patientData.dob || "N/A"}</li>
+                <li><strong>Gender:</strong> ${patientData.gender || "N/A"}</li>
+                <li><strong>National ID:</strong> ${patientData.id_number || "N/A"}</li>
+                <li><strong>Phone:</strong> ${patientData.phone || "N/A"}</li>
+                <li><strong>Email:</strong> ${patientData.email || "N/A"}</li>
+                <li><strong>Address:</strong> ${patientData.address || "N/A"}</li>
+                <li><strong>Emergency Contact Name:</strong> ${patientData.emergency_name || "N/A"}</li>
+                <li><strong>Emergency Relationship:</strong> ${patientData.emergency_relationship || "N/A"}</li>
+                <li><strong>Emergency Phone:</strong> ${patientData.emergency_phone || "N/A"}</li>
+                <li><strong>Insurance Provider:</strong> ${patientData.insurance_provider || "N/A"}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer">
+            <div class="footer-name">${patientData.full_name || "Unnamed Patient"}</div>
+            <div class="footer-details">
+              PATIENT ID: ${patientData.patient_id || "N/A"}<br/>
+              Contact: ${patientData.phone || "N/A"}
+            </div>
+            <button class="chat-button" onclick="toggleChat()">🤖 Ask AI</button>
+          </div>
+          <div id="chatbot-popup">
+            <div class="chat-header">
+              Ask AI Assistant
+              <span onclick="toggleChat()">❌</span>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-input-area">
+              <input type="text" id="chat-input" placeholder="Ask something about this patient..." autocomplete="off" />
+              <button id="mic-btn" title="Voice input not implemented yet">🎤</button>
+              <button id="send-btn" title="Send message">➤</button>
+            </div>
+          </div>
+        </div>
+      `;
 
       attachChatEvents();
     } catch (err) {
