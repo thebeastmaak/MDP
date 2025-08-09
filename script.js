@@ -92,45 +92,57 @@ function attachChatEvents() {
   const input = document.getElementById("chat-input");
 
   if (sendBtn) sendBtn.onclick = async () => {
-    const message = input.value.trim();
-    if (!message) return;
+  const message = input.value.trim();
+  if (!message) return;
 
-    messages.innerHTML += `<div><em>AI is typing...</em></div>`;
-    messages.scrollTop = messages.scrollHeight;
-    input.value = "";
+  messages.innerHTML += `<div><em>AI is typing...</em></div>`;
+  messages.scrollTop = messages.scrollHeight;
+  input.value = "";
 
-    try {
-      const res = await fetch("https://dpp-chatbot-backend.onrender.com/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message }),
-      });
+  try {
+    const res = await fetch("https://dpp-chatbot-backend.onrender.com/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        id, // patient ID from URL
+        context: {
+          name: data.name || "",
+          product_id: data.product_id || "",
+          manufacturer: data.manufacturer || "",
+          batch_number: data.batch_number || "",
+          expiry_date: data.expiry_date || "",
+          certification: data.certification || "",
+          description: data.description || ""
+        }
+      }),
+    });
 
-      const data = await res.json();
+    const dataRes = await res.json();
 
-      // Remove "AI is typing..."
-      const typingMsg = messages.querySelector("em");
-      if (typingMsg) typingMsg.parentElement.remove();
+    // Remove "AI is typing..."
+    const typingMsg = messages.querySelector("em");
+    if (typingMsg) typingMsg.parentElement.remove();
 
-      if (res.ok && data.reply) {
-        messages.innerHTML += `<div><strong>AI:</strong> ${data.reply}</div>`;
-      } else if (data.error) {
-        messages.innerHTML += `<div><strong>AI:</strong> ❌ Error: ${data.error}</div>`;
-        console.error("Backend error:", data.error);
-      } else {
-        messages.innerHTML += `<div><strong>AI:</strong> 🤖 Unexpected server response.</div>`;
-        console.error("Unexpected response:", data);
-      }
-    } catch (err) {
-      const typingMsg = messages.querySelector("em");
-      if (typingMsg) typingMsg.parentElement.remove();
-
-      messages.innerHTML += `<div><strong>AI:</strong> ❌ Error reaching AI service.</div>`;
-      console.error(err);
+    if (res.ok && dataRes.reply) {
+      messages.innerHTML += `<div><strong>AI:</strong> ${dataRes.reply}</div>`;
+    } else if (dataRes.error) {
+      messages.innerHTML += `<div><strong>AI:</strong> ❌ Error: ${dataRes.error}</div>`;
+      console.error("Backend error:", dataRes.error);
+    } else {
+      messages.innerHTML += `<div><strong>AI:</strong> 🤖 Unexpected server response.</div>`;
+      console.error("Unexpected response:", dataRes);
     }
+  } catch (err) {
+    const typingMsg = messages.querySelector("em");
+    if (typingMsg) typingMsg.parentElement.remove();
 
-    messages.scrollTop = messages.scrollHeight;
-  };
+    messages.innerHTML += `<div><strong>AI:</strong> ❌ Error reaching AI service.</div>`;
+    console.error(err);
+  }
+
+  messages.scrollTop = messages.scrollHeight;
+};
 
   if (micBtn) micBtn.onclick = () => {
     alert("🎤 Voice input not yet implemented.");
