@@ -175,7 +175,7 @@
     }
     try {
       // Backend patient data endpoint
-      const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
+      const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/001`);
       patientData = await res.json();
       if (res.status !== 200) {
         return container.innerHTML = `<p>❌ ${patientData.error || 'Patient not found.'}</p>`;
@@ -213,9 +213,12 @@
             <div class="footer-details">
               PATIENT ID: ${patientData.patient_id || "N/A"}<br/>
               Contact: ${patientData.phone || "N/A"}
-            </div>
-            <button class="chat-button" onclick="toggleChat()">🤖 Ask AI</button>
-          </div>
+            <div class="button-container">
+        <button class="btn-top" onclick="alert('Button 1 clicked')">Button 1</button>
+        <button class="btn-top" onclick="alert('Button 2 clicked')">Button 2</button>
+        <button class="chat-button" onclick="toggleChat()">Ask AI</button>
+      </div>
+    </div>
           <div id="chatbot-popup">
             <div class="chat-header">
               Ask AI Assistant
