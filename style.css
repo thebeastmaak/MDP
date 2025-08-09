@@ -188,6 +188,31 @@ body {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: 400px;
+  margin: 1rem auto 0 auto;
+}
+
+.button-container button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-top {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.btn-top:hover {
+  background-color: #357ABD;
+}
 
 .chat-input button:hover,
 .chat-input button:focus {
