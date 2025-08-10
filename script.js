@@ -1,171 +1,133 @@
-const container = document.getElementById("product-container");
-const params = new URLSearchParams(window.location.search);
-const id = params.get("id");
+<script>
+  const container = document.getElementById("patient-container");
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  let patientData = null;
 
-async function fetchProduct() {
-  container.innerHTML = "Loading medical product details...";
-
-  if (!id) {
-    container.innerHTML = `<p>❌ No product ID specified in URL.</p>`;
-    return;
-  }
-
-  try {
-    const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
-
-    let data;
+  async function fetchPatient() {
+    container.innerHTML = "Loading...";
+    if (!id) {
+      container.innerHTML = "<p>❌ No Patient ID provided in URL.</p>";
+      return;
+    }
     try {
-      data = await res.json();
-    } catch {
-      container.innerHTML = `<p>❌ Invalid response from server.</p>`;
-      return;
-    }
-
-    console.log("Fetch response status:", res.status);
-    console.log("Fetch response data:", data);
-
-    if (res.status !== 200) {
-      container.innerHTML = `<p>❌ ${data.error || "Failed to load medical product."}</p>`;
-      return;
-    }
-
-    container.innerHTML = `
-      <div class="medical-passport">
-        <div class="header">DIGITAL MEDICAL PRODUCT PASSPORT</div>
-        <div class="passport-body">
-          <div class="product-photo">
-            <img src="${data.image || "https://via.placeholder.com/300x400?text=Medical+Product"}" alt="${data.name || "Medical Product"}" />
-          </div>
-          <div class="product-info">
-            <h2>${data.name || "Unnamed Medical Product"}</h2>
-            <ul>
-              <li><strong>Product ID:</strong> ${data.product_id || "N/A"}</li>
-              <li><strong>Manufacturer:</strong> ${data.manufacturer || "N/A"}</li>
-              <li><strong>Batch Number:</strong> ${data.batch_number || "N/A"}</li>
-              <li><strong>Expiry Date:</strong> ${data.expiry_date || "N/A"}</li>
-              <li><strong>Certification:</strong> ${data.certification || "N/A"}</li>
-              <li><strong>Description:</strong> ${data.description || "N/A"}</li>
-            </ul>
-          </div>
-        </div>
-        <div class="footer">
-          <div class="footer-name">${data.name || "Unnamed Medical Product"}</div>
-          <div class="footer-details">${data.manufacturer || "Manufacturer Not Provided"}</div>
-          <button class="chat-button" onclick="toggleChat()">Ask AI</button>
-        </div>
-
-        <div id="chatbot-popup" class="chat-popup">
-          <div class="chat-header">
-            Ask AI <span onclick="toggleChat()" style="cursor:pointer;float:right;">❌</span>
-          </div>
-          <div id="chat-messages" class="chat-messages"></div>
-          <div class="chat-input">
-            <input type="text" id="chat-input" placeholder="Ask something about this medical product..." autocomplete="off" />
-            <button id="mic-btn" title="Voice input not implemented yet">🎤</button>
-            <button id="send-btn" title="Send message">➤</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-    attachChatEvents();
-  } catch (err) {
-    console.error("Fetch error:", err);
-    container.innerHTML = `<p>❌ Failed to load medical product. Try again later.</p>`;
-  }
-}
-
-function toggleChat() {
-  const popup = document.querySelector("#chatbot-popup");
-  if (popup) popup.classList.toggle("visible");
-
-  if (popup && popup.classList.contains("visible")) {
-    const input = document.getElementById("chat-input");
-    if (input) input.focus();
-  }
-}
-
-function attachChatEvents() {
-  const sendBtn = document.getElementById("send-btn");
-  const micBtn = document.getElementById("mic-btn");
-  const messages = document.getElementById("chat-messages");
-  const input = document.getElementById("chat-input");
-
-  if (sendBtn) sendBtn.onclick = async () => {
-  const message = input.value.trim();
-  if (!message) return;
-
-  messages.innerHTML += `<div><em>AI is typing...</em></div>`;
-  messages.scrollTop = messages.scrollHeight;
-  input.value = "";
-
-  try {
-    const res = await fetch("https://chatbot-mdp.onrender.com/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message,
-        id, // patient ID from URL
-        context: {
-          name: data.name || "",
-          product_id: data.product_id || "",
-          manufacturer: data.manufacturer || "",
-          batch_number: data.batch_number || "",
-          expiry_date: data.expiry_date || "",
-          certification: data.certification || "",
-          description: data.description || ""
-        }
-      }),
-    });
-
-    const dataRes = await res.json();
-
-    // Remove "AI is typing..."
-    const typingMsg = messages.querySelector("em");
-    if (typingMsg) typingMsg.parentElement.remove();
-
-    if (res.ok && dataRes.reply) {
-      messages.innerHTML += `<div><strong>AI:</strong> ${dataRes.reply}</div>`;
-    } else if (dataRes.error) {
-      messages.innerHTML += `<div><strong>AI:</strong> ❌ Error: ${dataRes.error}</div>`;
-      console.error("Backend error:", dataRes.error);
-    } else {
-      messages.innerHTML += `<div><strong>AI:</strong> 🤖 Unexpected server response.</div>`;
-      console.error("Unexpected response:", dataRes);
-    }
-  } catch (err) {
-    const typingMsg = messages.querySelector("em");
-    if (typingMsg) typingMsg.parentElement.remove();
-
-    messages.innerHTML += `<div><strong>AI:</strong> ❌ Error reaching AI service.</div>`;
-    console.error(err);
-  }
-
-  messages.scrollTop = messages.scrollHeight;
-};
-
-  if (micBtn) micBtn.onclick = () => {
-    alert("🎤 Voice input not yet implemented.");
-  };
-
-  if (input) {
-    input.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        sendBtn.click();
+      const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
+      patientData = await res.json();
+      if (!res.ok) {
+        container.innerHTML = `<p>❌ ${patientData.error || 'Patient not found.'}</p>`;
+        return;
       }
-    });
+
+      const photoSrc = patientData.photo_url || 'https://via.placeholder.com/300x400?text=Patient+Photo';
+
+      container.innerHTML = `
+        <div class="patient-passport">
+          <div class="header">DIGITAL PATIENT PASSPORT</div>
+          <div class="passport-body">
+            <div class="patient-photo">
+              <img src="${photoSrc}" alt="${patientData.full_name || 'Patient Photo'}" />
+            </div>
+            <div class="patient-info">
+              <h2>${patientData.full_name || "Unnamed Patient"}</h2>
+              <ul>
+                <li><strong>Patient ID:</strong> ${patientData.patient_id || "N/A"}</li>
+                <li><strong>Date of Birth:</strong> ${patientData.dob || "N/A"}</li>
+                <li><strong>Gender:</strong> ${patientData.gender || "N/A"}</li>
+                <li><strong>National ID:</strong> ${patientData.id_number || "N/A"}</li>
+                <li><strong>Phone:</strong> ${patientData.phone || "N/A"}</li>
+                <li><strong>Email:</strong> ${patientData.email || "N/A"}</li>
+                <li><strong>Address:</strong> ${patientData.address || "N/A"}</li>
+                <li><strong>Emergency Contact Name:</strong> ${patientData.emergency_name || "N/A"}</li>
+                <li><strong>Emergency Relationship:</strong> ${patientData.emergency_relationship || "N/A"}</li>
+                <li><strong>Emergency Phone:</strong> ${patientData.emergency_phone || "N/A"}</li>
+                <li><strong>Insurance Provider:</strong> ${patientData.insurance_provider || "N/A"}</li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer">
+            <div class="footer-name">${patientData.full_name || "Unnamed Patient"}</div>
+            <div class="footer-details">
+              PATIENT ID: ${patientData.patient_id || "N/A"}<br/>
+              Contact: ${patientData.phone || "N/A"}
+            </div>
+            <div class="button-container">
+              <button class="chat-button" onclick="toggleChat()">Ask AI</button>
+            </div>
+          </div>
+          <div id="chatbot-popup">
+            <div class="chat-header">
+              Ask AI Assistant
+              <span onclick="toggleChat()">❌</span>
+            </div>
+            <div id="chat-messages"></div>
+            <div id="chat-input-area">
+              <input type="text" id="chat-input" placeholder="Ask something about this patient..." autocomplete="off" />
+              <button id="send-btn" title="Send message">➤</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      attachChatEvents();
+    } catch (err) {
+      console.error(err);
+      container.innerHTML = `<p>❌ Failed to load patient data. Try again later.</p>`;
+    }
   }
-}
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("/firebase-messaging-sw.js")
-    .then((registration) => {
-      console.log("✅ Service Worker registered with scope:", registration.scope);
-    })
-    .catch((error) => {
-      console.error("❌ Service Worker registration failed:", error);
-    });
-}
+  function toggleChat() {
+    const popup = document.getElementById("chatbot-popup");
+    popup?.classList.toggle("visible");
+    if (popup?.classList.contains("visible")) {
+      document.getElementById("chat-input")?.focus();
+    }
+  }
 
-fetchProduct();
+  function attachChatEvents() {
+    const input = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("send-btn");
+    const messagesDiv = document.getElementById("chat-messages");
+
+    function appendMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.className = "message " + (sender === "user" ? "user" : "bot");
+      msg.textContent = text;
+      messagesDiv.appendChild(msg);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const question = input.value.trim();
+      if (!question) return;
+
+      appendMessage("You: " + question, "user");
+      input.value = "";
+      appendMessage("AI: ...thinking...", "bot");
+
+      try {
+        const response = await fetch("https://chatbot-mdp.onrender.com/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: question,
+            id: id,
+            context: patientData // send full patient data to backend
+          })
+        });
+
+        const data = await response.json();
+        messagesDiv.lastChild.textContent = "AI: " + (data.reply || data.answer || "Sorry, no answer available.");
+      } catch (error) {
+        messagesDiv.lastChild.textContent = "AI: Sorry, something went wrong.";
+        console.error(error);
+      }
+    }
+
+    sendBtn.onclick = sendMessage;
+    input.onkeydown = (e) => {
+      if (e.key === "Enter") sendMessage();
+    };
+  }
+
+  fetchPatient();
+</script>
