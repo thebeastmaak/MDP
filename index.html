@@ -22,7 +22,7 @@
         return;
       }
       try {
-        const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/001`);
+        const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
         patientData = await res.json();
         if (res.status !== 200) {
           return container.innerHTML = `<p>❌ ${patientData.error || 'Patient not found.'}</p>`;
@@ -121,7 +121,7 @@
   appendMessage("AI: ...thinking...", "bot");
 
   try {
-    const response = await fetch("https://dpp-chatbot-backend.onrender.com/chat", {
+    const response = await fetch("https://chatbot-mdp.onrender.com/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
