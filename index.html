@@ -121,29 +121,26 @@
   appendMessage("AI: ...thinking...", "bot");
 
   try {
-    const response = await fetch("https://chatbot-mdp.onrender.com/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: question,
-        id: id, // patient ID from URL
-        context: {
-          full_name: patientData.full_name || "",
-          patient_id: patientData.patient_id || "",
-          dob: patientData.dob || "",
-          gender: patientData.gender || "",
-          phone: patientData.phone || "",
-          email: patientData.email || "",
-          address: patientData.address || "",
-          insurance_provider: patientData.insurance_provider || "",
-          emergency_contact: {
-            name: patientData.emergency_name || "",
-            relationship: patientData.emergency_relationship || "",
-            phone: patientData.emergency_phone || ""
-          }
+    async function sendMessage() {
+      const question = chatInput.value.trim();
+      if (!question) return;
+      appendMessage("You: " + question, "user");
+      chatInput.value = "";
+      appendMessage("AI: ...thinking...", "bot");
+
+      try {
+        const response = await fetch("https://chatbot-mdp.onrender.com/ask", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: question,
+            id: id // send patient id if backend expects it
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Server returned status " + response.status);
         }
-      })
-    });
 
     const data = await response.json();
     messagesDiv.lastChild.textContent = "AI: " + (data.reply || data.answer || "Sorry, no answer available.");
