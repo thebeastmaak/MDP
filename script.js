@@ -105,13 +105,13 @@
       appendMessage("AI: ...thinking...", "bot");
 
       try {
-        const response = await fetch("https://chatbot-mdp.onrender.com/ask", {
+        const response = await fetch("https://chatbot-mdp.onrender.com/query", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            message: question,
-            id: id,
-            context: patientData // send full patient data to backend
+            question,
+            patientId: id,
+            context: patientData
           })
         });
 
