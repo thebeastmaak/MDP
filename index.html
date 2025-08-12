@@ -13,17 +13,17 @@
   const backendUrl = 'https://chatbot-mdp.onrender.com'; // Backend URL
   const container = document.getElementById("patient-container");
   const params = new URLSearchParams(window.location.search);
-  const patientId = params.get("id");
+  const id = params.get("id");
   let patientData = null;
 
   async function fetchPatient() {
     container.innerHTML = "Loading...";
-    if (!patientId) {
+    if (!id) {
       container.innerHTML = "<p>❌ No Patient ID provided in URL.</p>";
       return;
     }
     try {
-      const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${patientId}`);
+      const res = await fetch(`https://medical-dpp-backend.onrender.com/patient/${id}`);
       patientData = await res.json();
       if (!res.ok) {
         container.innerHTML = `<p>❌ ${patientData.error || 'Patient not found.'}</p>`;
@@ -124,7 +124,8 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             question,
-            id: patientId // ✅ only sending patient ID now
+            id,
+            context: patientData
           }),
         });
 
@@ -154,6 +155,7 @@
   }
 
   fetchPatient();
-  </script>
+</script>
+
 </body>
 </html>
